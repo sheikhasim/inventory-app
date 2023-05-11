@@ -70,7 +70,7 @@ public class InventoryServices {
     }
 
     //Delete only if no supply or demand exists for this item
-    public void deleteItemIfNotPresentInReferenceCollection(String itemId) throws RuntimeException {
+    public String deleteItemIfNotPresentInReferenceCollection(String itemId) throws RuntimeException {
         Optional<Item> itemOptional = itemRepository.findById(itemId);
         if (itemOptional.isPresent()) {
             Item item = itemOptional.get();
@@ -78,6 +78,7 @@ public class InventoryServices {
             List<Demand> demandReference = demandRepository.findByItem(itemId);
             if (supplyReference.isEmpty() && demandReference.isEmpty()) {
                 itemRepository.delete(item);
+                return "item deleted";
             } else {
                 throw new SupplyAndDemandExistException("Item Exist with supply or demand");
             }
@@ -117,7 +118,7 @@ public class InventoryServices {
     public Location findLocation(String locationId) {
     Optional<Location> foundLocation = locationRepository.findById(locationId);
     if(foundLocation.isEmpty())
-        throw new UserNotFoundException("location with locationId:"+locationId+"is not found");
+        throw new UserNotFoundException("location with locationId:"+locationId+" is not found");
     return foundLocation.get();
     }
 
@@ -131,14 +132,15 @@ public class InventoryServices {
         }
     }
 
-    public void deleteLocationIfNotPresentInReferenceCollection(String locationId) {
+    public String deleteLocationIfNotPresentInReferenceCollection(String locationId) {
         Optional<Location> locationOptional = locationRepository.findById(locationId);
         if (locationOptional.isPresent()) {
             Location location = locationOptional.get();
             List<Supply> supplyReference = supplyRepository.findByItem(location.getLocationId());
             List<Demand> demandReference = demandRepository.findByItem(location.getLocationId());
-            if (supplyReference.isEmpty() || demandReference.isEmpty()) {
+            if (supplyReference.isEmpty() && demandReference.isEmpty()) {
                 locationRepository.delete(location);
+                return "Location deleted!";
             } else {
                 throw new SupplyAndDemandExistException("Location Exist with supply or demand");
             }
@@ -166,6 +168,7 @@ public class InventoryServices {
                 }
         ).orElseThrow(() -> new UserNotFoundException("location with:" + locationId + " is not found")));
     }
+
 
 
 ///////////////////////////////////////////////////////-->Supply Services<--///////////////////////////////////////////////////////////

@@ -45,9 +45,9 @@ public class ItemController {
     }
 
     @DeleteMapping("/items/{id}")
-    public ResponseEntity<?> deleteItem(@PathVariable("id") String itemId){
-        inventoryServices.deleteItemIfNotPresentInReferenceCollection(itemId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> deleteItem(@PathVariable("id") String itemId){
+        String message = inventoryServices.deleteItemIfNotPresentInReferenceCollection(itemId);
+        return new ResponseEntity<>(message,HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/items/{id}")
@@ -80,9 +80,9 @@ public class ItemController {
     }
 
     @DeleteMapping("/location/{id}")
-    public ResponseEntity<?> deleteLocation(@PathVariable("id") String locationId){
-        inventoryServices.deleteLocationIfNotPresentInReferenceCollection(locationId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> deleteLocation(@PathVariable("id") String locationId){
+        String result = inventoryServices.deleteLocationIfNotPresentInReferenceCollection(locationId);
+        return new ResponseEntity<>(result,HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/location/{id}")

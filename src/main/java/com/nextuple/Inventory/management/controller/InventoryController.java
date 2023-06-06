@@ -1,16 +1,17 @@
 package com.nextuple.Inventory.management.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nextuple.Inventory.management.model.Transaction;
 import com.nextuple.Inventory.management.service.InventoryServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
-
+@CrossOrigin("*")
+@RequestMapping("/availability")
 @RestController
 public class InventoryController {
     @Autowired
@@ -18,15 +19,32 @@ public class InventoryController {
 
     ////////////////////////////////////////////////////-->Availability API<--////////////////////////////////////////////////
 
-    @GetMapping("/v1/availability/{userId}/{itemId}/{locationId}")
-    public ResponseEntity<Map<String,Object>> AvailableQtyOfTheItemAtTheGivenLocation(@PathVariable("userId")String userId, @PathVariable("itemId") String itemId, @PathVariable("locationId") String locationId) throws JsonProcessingException {
-        Map<String,Object> result  = inventoryServices.AvailableQtyOfTheItemAtTheGivenLocation(userId,itemId,locationId);
+    @GetMapping("/v1/{organizationId}/{itemId}/{locationId}")
+    public ResponseEntity<Map<String,Object>> AvailableQtyOfTheItemAtTheGivenLocation(@PathVariable("organizationId")String organizationId, @PathVariable("itemId") String itemId, @PathVariable("locationId") String locationId) throws JsonProcessingException {
+        Map<String,Object> result  = inventoryServices.AvailableQtyOfTheItemAtTheGivenLocation(organizationId,itemId,locationId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/v2/availability/{userId}/{itemId}")
-    public ResponseEntity<Map<String,Object>>AvailableQtyOfTheItemAtAllTheLocation(@PathVariable("userId")String userId,@PathVariable("itemId") String itemId) throws JsonProcessingException {
-        Map<String,Object> result  = inventoryServices.AvailableQtyOfTheItemAtAllTheLocation(userId,itemId);
+    @GetMapping("/v2/{organizationId}/{itemId}")
+    public ResponseEntity<Map<String,Object>>AvailableQtyOfTheItemAtAllTheLocation(@PathVariable("organizationId")String organizationId,@PathVariable("itemId") String itemId) throws JsonProcessingException {
+        Map<String,Object> result  = inventoryServices.AvailableQtyOfTheItemAtAllTheLocation(organizationId,itemId);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
+    @GetMapping("/v3/{organizationId}")
+    public ResponseEntity <List<Map<String,Object>>> getDetailsOfAllItemWithAvailability(@PathVariable("organizationId")String organizationId) throws JsonProcessingException {
+        List<Map<String,Object>>result  = inventoryServices.getDetailsOfAllItemWithAvailability(organizationId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/v4/{organizationId}")
+    public ResponseEntity <Map<String,Integer>> getTotalNumbersOfDashboard(@PathVariable("organizationId")String organizationId) throws JsonProcessingException {
+        Map<String,Integer>result  = inventoryServices.getTotalNumbersOfDashboard(organizationId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @GetMapping("/v5/{organizationId}")
+    public ResponseEntity<List<Transaction>>getTransaction(@PathVariable("organizationId") String organizationId){
+        return new ResponseEntity<>(inventoryServices.getTransactions(organizationId),HttpStatus.OK);
+    }
+
+
 }

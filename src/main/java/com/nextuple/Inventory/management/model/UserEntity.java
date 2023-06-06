@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.Set;
 
 @NoArgsConstructor
 @Setter @Getter @Data
@@ -19,21 +19,21 @@ import java.util.Set;
 public class UserEntity {
     @Id @Indexed(unique = true)
     private String id;
-    private String userName;
+    private String username;
     private String userEmail;
-    private String userPassword;
+    private String password;
     private String organizationId;
-    private Set<Role> roles =  new HashSet<>();
+    private List<Role> roles =  new ArrayList<>();
 
     @DBRef
     Organization organization;
 
 
-    public UserEntity(String id, String userName, String userEmail, String userPassword, String organizationId) {
+    public UserEntity(String id, String username, String userEmail, String password, String organizationId) {
         this.id = id;
-        this.userName = userName;
+        this.username = username;
         this.userEmail = userEmail;
-        this.userPassword = userPassword;
+        this.password = password;
         this.organizationId = organizationId;
     }
 }

@@ -5,6 +5,8 @@ import com.nextuple.Inventory.management.model.Item;
 import com.nextuple.Inventory.management.model.Organization;
 import com.nextuple.Inventory.management.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +39,13 @@ public class OrganizationServices {
     ////////////////////////////////////////Organization Services////////////////////////////////////////////////
     public  Organization createOrganization(Organization organization){
         Optional<Organization> organizationExist =organizationRepository.findById(organization.getOrganizationId());
+        if(organizationRepository.existsById(organization.getOrganizationId())){
+            throw new RuntimeException("Organization Id exist");
+        }
+        if(organizationRepository.existsByOrganizationName(organization.getOrganizationName())){
+            throw new RuntimeException("Organization name exist");
+        }
+
         if (organizationExist.isPresent()){
             throw new OrganizationNotFoundException("Organization already exist!");
         }
@@ -87,4 +96,6 @@ public class OrganizationServices {
                 }
         ).orElseThrow(()->new OrganizationNotFoundException("Organization not found!"));
     }
+
+
 }

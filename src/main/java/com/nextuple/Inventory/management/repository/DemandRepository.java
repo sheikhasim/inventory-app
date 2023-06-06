@@ -12,4 +12,17 @@ public interface DemandRepository extends MongoRepository<Demand,String> {
     List<Demand> findByItemIdAndLocationId(String itemId, String locationId);
 
     List<Demand> findByDemandTypeAndLocationId(String demandType, String locationId);
+
+
+    List<Demand> findAllByOrganizationId(String organizationId);
+
+    Optional<Demand> findByIdAndOrganizationId(String demandId, String organizationId);
+
+    List<Demand> findByItemIdAndLocationIdAndOrganizationId(String itemId, String locationId, String organizationId);
+
+    List<Demand> findByDemandTypeAndLocationIdAndOrganizationId(String demandType, String locationId, String organizationId);
+
+    List<Demand> findByItemIdAndOrganizationId(String itemId, String organizationId);
+
+    List<Demand> findByLocationIdAndOrganizationId(String locationId, String organizationId);
 }

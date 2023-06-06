@@ -2,6 +2,7 @@ package com.nextuple.Inventory.management.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -22,8 +23,11 @@ public class Location {
     private String state;
     private String country;
     private String pinCode;
+    private String organizationId;
+    @DBRef
+    private Organization organization;
 
-    public Location(String locationId, String locationDesc, String locationType, boolean pickupAllowed, boolean shippingAllowed, boolean deliveryAllowed, String addressLine1, String addressLine2,String addressLine3, String city, String state, String country, String pinCode) {
+    public Location(String locationId, String locationDesc, String locationType, boolean pickupAllowed, boolean shippingAllowed, boolean deliveryAllowed, String addressLine1, String addressLine2,String addressLine3, String city, String state, String country, String pinCode,String organizationId) {
         this.locationId = locationId;
         this.locationDesc = locationDesc;
         this.locationType = locationType;
@@ -37,29 +41,16 @@ public class Location {
         this.state = state;
         this.country = country;
         this.pinCode = pinCode;
-    }
-
-
-    @Override
-    public String toString() {
-        return "Location{" +
-                "locationId='"+locationId+'\''+
-                "locationDesc='" + locationDesc + '\'' +
-                ", locationType='" + locationType + '\'' +
-                ", pickupAllowed=" + pickupAllowed +
-                ", shippingAllowed=" + shippingAllowed +
-                ", deliveryAllowed=" + deliveryAllowed +
-                ", addressLine1='" + addressLine1 + '\'' +
-                ", addressLine2='" + addressLine2 + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", country='" + country + '\'' +
-                ", pinCode='" + pinCode + '\'' +
-                '}';
+        this.organizationId = organizationId;
     }
 }
 
 /*
+
+
+Location location = new Location("111", "locationDesc", "locationType", true,true,true,"addressLine1",
+ "addressLine2","addressLine3","city","state","country","pincode","ORG001");
+
 {
   "locationId": "01504",
   "locationDesc": "Big Bazar - Koramangala",
@@ -67,13 +58,14 @@ public class Location {
   "pickupAllowed":true,
   "shippingAllowed":false,
   "deliveryAllowed":true,
-  "addressLine1":"",
-  "addressLine2":"",
-  "addressLine3":"",
-  "city":"",
-  "state":"",
-  "country":"",
-  "pincode":""
+  "addressLine1":"cma apartment",
+  "addressLine2":"vedant road",
+  "addressLine3":"jayanagar",
+  "city":"banglore",
+  "state":"karnatak",
+  "country":"india",
+  "pinCode":"585-310",
+  "organizationId":"userOne"
 }
 
 API Should honour the itemId value passed in the input i.e. it's a mandatory field of the API.

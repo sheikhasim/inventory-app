@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Demand {
     @Id
     private  String id;
+    private String organizationId;
     private String itemId;
     private String locationId;
     private String demandType;
@@ -22,24 +23,26 @@ public class Demand {
     private Item item;
     @DBRef
     private Location location;
+    @DBRef Organization organization;
 
-    public Demand( String demandType, int quantity, String itemId, String locationId) {
+    public Demand( String organizationId,String demandType, int quantity, String itemId, String locationId) {
+        this.organizationId = organizationId;
         this.demandType = demandType;
         this.quantity = quantity;
         this.itemId = itemId;
         this.locationId = locationId;
     }
+
     public enum existDemandTypes{HARDPROMISED, PLANNED}
 }
+
 
 /*
 {
     "demandType":"HARDPROMISED",
     "quantity":30,
+    "organizationId":"ORG001",
     "itemId":"6383728",
     "locationId":"01504"
 }
-
-Id  for this table should be auto generated field.
-That id should be part of the response field.
 */

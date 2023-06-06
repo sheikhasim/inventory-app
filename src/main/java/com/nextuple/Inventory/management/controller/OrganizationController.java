@@ -1,5 +1,4 @@
 package com.nextuple.Inventory.management.controller;
-
 import com.nextuple.Inventory.management.model.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,29 +10,31 @@ import com.nextuple.Inventory.management.service.*;
 import java.net.URI;
 import java.util.List;
 @CrossOrigin("*")
+@RequestMapping("/organization")
 @RestController
 public class OrganizationController {
     @Autowired
     private OrganizationServices organizationServices;
 
     /////////////////////////////////////////////////organization API's///////////////////////////////////////////////////////////////////////
-    @GetMapping("/organization")
+    @GetMapping("/")
     public ResponseEntity<List<Organization>> findAllOrganization(){
         List<Organization>organizationList = organizationServices.findAllOrganization();
         return new ResponseEntity<>(organizationList, HttpStatus.OK);
     }
 
-    @GetMapping("/organization/{organizationId}")
+    @GetMapping("/{organizationId}")
     public ResponseEntity<Organization>findOrganizationById(@PathVariable("organizationId") String organizationId){
         return new ResponseEntity<>(organizationServices.findOrganizationById(organizationId), HttpStatus.OK);
     }
 
-    @GetMapping("/v1/organization/{organizationEmail}")
+    @GetMapping("/v1/{organizationEmail}")
     public ResponseEntity<Organization>findOrganizationByEmail(@PathVariable("organizationEmail") String organizationEmail){
         return new ResponseEntity<>(organizationServices.findByEmailId(organizationEmail), HttpStatus.OK);
     }
 
-    @PostMapping("/organization")
+
+    @PostMapping("/")
     public  ResponseEntity<Organization>createOrganization(@RequestBody Organization organization){
         Organization organizationCreted = organizationServices.createOrganization(organization);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -43,12 +44,12 @@ public class OrganizationController {
         return ResponseEntity.created(uri).body(organizationCreted);
     }
 
-    @DeleteMapping("/organization/{organizationId}")
+    @DeleteMapping("/{organizationId}")
     public ResponseEntity<String>organizationDelete(@PathVariable("organizationId") String organizationId){
         return new ResponseEntity<>(organizationServices.deleteOrganization(organizationId), HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/organization/{organizationId}")
+    @PatchMapping("/{organizationId}")
     public ResponseEntity<Organization> updateOrganization(@RequestBody Organization organization, @PathVariable("organizationId")String organizationId){
         return new ResponseEntity<>(organizationServices.updateOrganization(organization,organizationId),HttpStatus.ACCEPTED);
     }

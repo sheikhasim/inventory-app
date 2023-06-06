@@ -10,21 +10,25 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-//@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 @Document(collection = "supply")
 public class Supply {
     @Id
     private String id;
     private String itemId;
     private String locationId;
+    private String organizationId;
     private String supplyType;
     private int quantity;
     @DBRef
     private Item item;
     @DBRef
     private Location location;
+    @DBRef
+    private Organization organization;
 
-    public Supply( String itemId, String locationId,String supplyType, int quantity) {
+    public Supply( String organizationId,String itemId,String locationId,String supplyType, int quantity) {
+        this.organizationId = organizationId;
         this.itemId = itemId;
         this.locationId = locationId;
         this.supplyType = supplyType;
@@ -32,19 +36,16 @@ public class Supply {
     }
     public enum existSupplyTypes {ONHAND, INTRANSIT, DAMAGED}
 
-    //to String method
 }
 
 /*
 {
-    "itemid": "203420939",
-    "locationid": "01990",
+    "organizationId":"ORG001",
+    "itemid": "001",
+    "locationid": "110",
     "supplyType":"ONHAND",
     "quantity": 7
 }
-
-Id  for this table should be auto generated field.
-That id should be part of the response field.
 
 Diff Supply Types:
 ONHAND

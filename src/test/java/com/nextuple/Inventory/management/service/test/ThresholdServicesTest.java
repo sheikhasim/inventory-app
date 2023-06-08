@@ -1,4 +1,4 @@
-package com.nextuple.Inventory.management;
+package com.nextuple.Inventory.management.service.test;
 
 import com.nextuple.Inventory.management.service.ThresholdService;
 import org.junit.jupiter.api.Test;

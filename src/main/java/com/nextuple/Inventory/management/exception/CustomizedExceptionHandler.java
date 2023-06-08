@@ -10,41 +10,41 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(OrganizationNotFoundException.class)
-    public final ResponseEntity<Error> handleOrganizationNotFoundException(Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails> handleOrganizationNotFoundException(Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SupplyAndDemandExistException.class)
-    public final ResponseEntity<Error> handleSupplyAndDemandNotFoundException(Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails> handleSupplyAndDemandNotFoundException(Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public final ResponseEntity<Error> ItemNotFoundException(Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails> handleItemNotFoundException(Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(DemandNotFoundException.class)
-    public final ResponseEntity<Error> DemandNotFoundException(Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails> handleDemandNotFoundException(Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SupplyNotFoundException.class)
-    public final ResponseEntity<Error>SupplyNotFoundException (Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails>handleSupplyNotFoundException (Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(ThresholdNotFoundException.class)
-    public final ResponseEntity<Error>ThresholdNotFoundException (Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails>handleThresholdNotFoundException (Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(LocationNotFoundException.class)
-    public final ResponseEntity<Error>LocationNotFoundException (Exception ex) throws Exception{
+    public final ResponseEntity<ErrorDetails>handleLocationNotFoundException (Exception ex) throws Exception{
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }

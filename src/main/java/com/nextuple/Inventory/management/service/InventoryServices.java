@@ -1,16 +1,21 @@
 package com.nextuple.Inventory.management.service;
 
+import com.nextuple.Inventory.management.dto.LowStockItemDTO;
 import com.nextuple.Inventory.management.exception.SupplyNotFoundException;
 import com.nextuple.Inventory.management.model.*;
 import com.nextuple.Inventory.management.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.VariableOperators;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Map.Entry.comparingByValue;
+
 @Component
 @Service
 public class InventoryServices {
@@ -59,7 +64,10 @@ public class InventoryServices {
         result.put("totalSupply",totalSupply);
         result.put("totalDemand",totalDemand);
         result.put("availableQty",availableQty);
-        int minThreshold = thresholdRepository.findByItemIdAndLocationIdAndOrganizationId(itemId,locationId,organizationId).get().getMinThreshold();
+
+       Optional<Threshold> threshold= thresholdRepository.findByItemIdAndLocationIdAndOrganizationId(itemId,locationId,organizationId);
+       if(threshold.isPresent()){
+        int minThreshold = threshold.get().getMinThreshold();
         if(availableQty<minThreshold)
             result.put("Sock level","Red");
         else if (availableQty == minThreshold) {
@@ -67,6 +75,7 @@ public class InventoryServices {
         }else{
             result.put("Sock level","Green");
         }
+       }
         return result;
 
     }
@@ -114,12 +123,36 @@ public class InventoryServices {
      Integer totalItems = itemList.size();
      Integer totalLocation = locationList.size();
      Integer totalSupply = supplyList.size();
+     List<LowStockItemDTO> stockDetails = getLowStockItems(organizationId);
+     Integer totalTrendingItems = getMostTrendingItems(organizationId).size();
+     List<LowStockItemDTO> highStockList = new ArrayList<>();
+     List<LowStockItemDTO> lowStockList = new ArrayList<>();
+
+     Set<String> categories = new HashSet<>();
+     for (Item item: itemList){
+         categories.add(item.getCategory());
+     }
+
+
+     for ( LowStockItemDTO stock : stockDetails) {
+         if (stock.getStockType().equals("High Stock")) {
+             highStockList.add(stock);
+         } else if (stock.getStockType().equals("Low Stock")) {
+             lowStockList.add(stock);
+         }
+     }
+     Integer numberOfLowStockItems =lowStockList.size();
+     Integer numberHighStockItems =highStockList.size();
 
          dataNumber.put("TotalItems",totalItems);
          dataNumber.put("TotalSupply",totalSupply);
          dataNumber.put("TotalDemand",totalDemand);
          dataNumber.put("totalLocation",totalLocation);
          dataNumber.put("totalActiveItems",totalActiveItem);
+         dataNumber.put("totalTrendingItems",totalTrendingItems);
+         dataNumber.put("totalLowStockItems",numberOfLowStockItems);
+         dataNumber.put("totalHighStockItems",numberHighStockItems);
+         dataNumber.put("totalCategories",categories.size());
         return dataNumber;
  }
 
@@ -136,6 +169,58 @@ public class InventoryServices {
         return transactionList;
    }
 
+   //to Get most trending item in the inventory
+   public Map<String, Integer>getMostTrendingItems(String organizationId){
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+       LocalDate today = LocalDate.now();
+       LocalDate fiveDaysAgo = today.minusDays(5);
+
+       Map<String, Integer> trendingItems = new HashMap<>();
+       List<Item> itemList = itemRepository.findByOrganizationId(organizationId);
+       List<Transaction> transactionList = transactionRepository.findAllByOrganizationId(organizationId)
+               .stream()
+               .filter(transaction -> transaction.getType().equalsIgnoreCase("demand"))
+               .filter(transaction -> {
+                   LocalDate transactionDate = LocalDate.parse(transaction.getDate(),formatter);
+                   return transactionDate.isAfter(fiveDaysAgo) || transactionDate.isEqual(fiveDaysAgo);
+               })
+               .sorted(Comparator.comparing(Transaction::getDate))
+               .toList();
+
+       for(Transaction transaction:transactionList){
+           if(trendingItems.containsKey(transaction.getItemId())){
+               trendingItems.put(transaction.getItemId(),trendingItems.get(transaction.getItemId())+transaction.getQuantity());
+           }else{
+               trendingItems.put(transaction.getItemId(),transaction.getQuantity());
+           }
+       }
+        return trendingItems;
+   }
+
+   public List<LowStockItemDTO> getLowStockItems(String organizationId) {
+       List<LowStockItemDTO> stockDetails = new ArrayList<>();
+       List<Item> itemList = itemRepository.findByOrganizationId(organizationId);
+       List<Location> locationList = locationRepository.findAllByOrganizationId(organizationId);
+
+       for (Item item:itemList) {
+           for (Location location:locationList) {
+               Map<String,Object> result  = AvailableQtyOfTheItemAtTheGivenLocation (organizationId,item.getItemId(),location.getLocationId());
+               int totalSupply = Integer.parseInt(result.get("totalSupply").toString());
+               int availableQuantity= Integer.parseInt(result.get("availableQty").toString());
+               Optional<Threshold>  threshold = thresholdRepository.findByItemIdAndLocationIdAndOrganizationId(item.getItemId(), location.getLocationId(), organizationId);
+               if (threshold.isPresent()){
+               int minThreshold = threshold.get().getMinThreshold();
+               int maxThreshold = threshold.get().getMaxThreshold();
+               if(totalSupply >0 && availableQuantity <= (totalSupply*5)/100+minThreshold){
+                   stockDetails.add(new LowStockItemDTO(item.getItemId(),location.getLocationId(),"Low Stock",availableQuantity));
+               }
+               if( totalSupply >0 && availableQuantity >= maxThreshold-(totalSupply*5)/100  ){
+                   stockDetails.add(new LowStockItemDTO(item.getItemId(),location.getLocationId(),"High Stock",availableQuantity));
+               }
+           }}
+       }
+       return stockDetails;
+    }
 }
 
 

@@ -192,7 +192,7 @@ public class SupplyServices {
         ).orElseThrow(()->new SupplyNotFoundException("Supply not Found"));
     }
 
-    int totalSupplyForItemAtParticularLocation(String organizationId,String itemId, String locationId){
+    public int totalSupplyForItemAtParticularLocation(String organizationId, String itemId, String locationId){
         int totalSupply = 0;
         List<Supply> supplyList = supplyRepository.findByItemIdAndLocationIdAndOrganizationId(itemId, locationId,organizationId);
         if(supplyList.isEmpty())
@@ -203,7 +203,7 @@ public class SupplyServices {
         }
         return totalSupply;
     }
-    int totalSupplyForItemAtAllLocation(String organizationId, String itemId){
+    public int totalSupplyForItemAtAllLocation(String organizationId, String itemId){
         int totalSupply = 0;
         List<Supply> supplyList = supplyRepository.findByItemIdAndOrganizationId(itemId,organizationId);
 

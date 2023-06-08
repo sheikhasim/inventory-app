@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ThresholdRepository extends MongoRepository<Threshold,String> {
-    Optional<Threshold> findByItemIdAndLocationId(String itemId, String locationId);
 
    
     Optional<Threshold> findByItemIdAndLocationIdAndOrganizationId(String itemId, String locationId, String organizationId);

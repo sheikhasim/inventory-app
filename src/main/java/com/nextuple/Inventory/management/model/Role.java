@@ -21,4 +21,9 @@ public class Role {
     private String name;
     @DBRef
     private List<UserEntity> users = new ArrayList<>();
+
+    public Role(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

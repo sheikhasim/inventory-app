@@ -172,7 +172,7 @@ public class DemandService {
 
 
 
-    int totalDemandForItemAtAllLocation(String organizationId,String itemId){
+    public int totalDemandForItemAtAllLocation(String organizationId, String itemId){
         int totalDemand = 0;
         List<Demand> demandList = demandRepository.findByItemIdAndOrganizationId(itemId,organizationId);
         if(!demandList.isEmpty()) {
@@ -183,7 +183,7 @@ public class DemandService {
         }
         return totalDemand;
     }
-    int totalDemandForItemAtParticularLocation(String organizationId,String itemId, String locationId){
+    public int totalDemandForItemAtParticularLocation(String organizationId, String itemId, String locationId){
         int totalDemand = 0;
         List<Demand> demandList = demandRepository.findByItemIdAndLocationIdAndOrganizationId(itemId, locationId, organizationId);
         if(!demandList.isEmpty()) {

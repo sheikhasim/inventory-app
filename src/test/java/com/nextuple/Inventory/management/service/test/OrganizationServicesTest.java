@@ -1,4 +1,4 @@
-package com.nextuple.Inventory.management;
+package com.nextuple.Inventory.management.service.test;
 import com.nextuple.Inventory.management.exception.OrganizationNotFoundException;
 import com.nextuple.Inventory.management.model.Item;
 import com.nextuple.Inventory.management.model.Organization;

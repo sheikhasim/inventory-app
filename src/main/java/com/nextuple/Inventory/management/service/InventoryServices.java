@@ -1,6 +1,7 @@
 package com.nextuple.Inventory.management.service;
 
 import com.nextuple.Inventory.management.dto.LowStockItemDTO;
+import com.nextuple.Inventory.management.dto.TopTenItemsVsOtherItems;
 import com.nextuple.Inventory.management.exception.SupplyNotFoundException;
 import com.nextuple.Inventory.management.model.*;
 import com.nextuple.Inventory.management.repository.*;
@@ -220,6 +221,41 @@ public class InventoryServices {
            }}
        }
        return stockDetails;
+    }
+
+    public TopTenItemsVsOtherItems topTenItemsVsotherItems(String organizationId){
+    List<Item> itemList = itemRepository.findByOrganizationId(organizationId);
+    long totalDemandOfAllItems = 0;
+    long totalDemandOfTopTenItems=0;
+    long totalDemandOfOtherItems = 0;
+
+    Map<String,Integer> demandList = new HashMap<>();
+        for (Item item:itemList) {
+            int totalDemand = demandService.totalDemandForItemAtAllLocation(organizationId,item.getItemId());
+            if(totalDemand>0){
+                totalDemandOfAllItems+=totalDemand;
+                demandList.put(item.getItemId(),totalDemand);
+            }
+        }
+        Map<String, Integer> sortedMap = demandList.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(
+                        LinkedHashMap::new,
+                        (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+                        LinkedHashMap::putAll
+                );
+
+        Map<String, Integer> topTenEntries = sortedMap.entrySet().stream()
+                .limit(2)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+
+        for (Map.Entry<String, Integer> entry : topTenEntries.entrySet()) {
+           totalDemandOfTopTenItems+=entry.getValue();
+        }
+        totalDemandOfOtherItems = totalDemandOfAllItems-totalDemandOfTopTenItems;
+        return new TopTenItemsVsOtherItems(totalDemandOfTopTenItems,totalDemandOfOtherItems,topTenEntries);
     }
 }
 

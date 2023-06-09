@@ -9,6 +9,9 @@ import com.nextuple.Inventory.management.model.Organization;
 import com.nextuple.Inventory.management.model.Supply;
 import com.nextuple.Inventory.management.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,14 +42,26 @@ public class ItemService {
         ItemService.organizationRepository = organizationRepository;
     }
 
+    private static final int DEFAULT_PAGE_NUMBER = 0;
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     //---------------------------------Item Service------------------------------------
     //Basic: Return all the items from item table
+
+    public Page<Item> pageableItemDetails(String organizationId, Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Item> itemList = itemRepository.findAllByOrganizationId(organizationId,pageable);
+        if(itemList.isEmpty())
+            throw new ItemNotFoundException("There is no items are Exist in the Inventory!");
+        return itemList;
+    }
     public List<Item> itemDetails(String organizationId) {
         List<Item> itemList = itemRepository.findByOrganizationId(organizationId);
         if(itemList.isEmpty())
             throw new ItemNotFoundException("There is no items are Exist in the Inventory!");
         return itemList;
     }
+
     public List<Item> getActiveItems(String organizationId) {
         List<Item> itemList = itemRepository.findByOrganizationId(organizationId);
         if(itemList.isEmpty())

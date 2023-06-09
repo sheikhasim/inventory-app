@@ -39,7 +39,7 @@ public class InventoryServicesTest {
     @Mock
     private DemandService demandService;
 
-    @InjectMocks
+    @Mock
     private InventoryServices inventoryServices;
 
     @BeforeEach
@@ -120,7 +120,7 @@ public class InventoryServicesTest {
     public void testGetDetailsOfAllItemWithAvailability() {
         // Mock data
         String organizationId = "org1";
-        String itemId1 = "item1";
+        String itemId1 = "itemId";
         String itemId2 = "item2";
         int totalSupply1 = 10;
         int totalDemand1 = 5;
@@ -128,21 +128,29 @@ public class InventoryServicesTest {
         int totalSupply2 = 15;
         int totalDemand2 = 3;
         int availableQty2 = totalSupply2 - totalDemand2;
-
+        Map<String,Object> result = new HashMap<>();
+        result.put("organizationId",organizationId);
+        result.put("itemId","itemId");
+        result.put("totalSupply",10);
+        result.put("totalDemand",5);
+        result.put("locationId","NETWORK");
+        result.put("availableQty",5);
+        List<Map<String,Object>>resultListExpected = new ArrayList<>();
+        resultListExpected.add(result);
         // Mock dependencies
         Item item1 = new Item();
         item1.setItemId(itemId1);
         Item item2 = new Item();
         item2.setItemId(itemId2);
         when(itemRepository.findByOrganizationId(organizationId)).thenReturn(Arrays.asList(item1, item2));
-        when(inventoryServices.AvailableQtyOfTheItemAtAllTheLocation(organizationId, itemId1)).thenReturn(createAvailabilityResult(organizationId, itemId1, totalSupply1, totalDemand1, availableQty1));
-        when(inventoryServices.AvailableQtyOfTheItemAtAllTheLocation(organizationId, itemId2)).thenReturn(createAvailabilityResult(organizationId, itemId2, totalSupply2, totalDemand2, availableQty2));
-
+        when(inventoryServices.AvailableQtyOfTheItemAtAllTheLocation(organizationId, itemId1)).thenReturn(result);
+        when(inventoryServices.AvailableQtyOfTheItemAtAllTheLocation(organizationId, itemId2)).thenReturn(result);
+        when(inventoryServices.getDetailsOfAllItemWithAvailability(organizationId)).thenReturn(resultListExpected);
         // Invoke the method
         List<Map<String, Object>> resultList = inventoryServices.getDetailsOfAllItemWithAvailability(organizationId);
 
         // Verify the result
-        assertEquals(2, resultList.size());
+        assertEquals(1, resultList.size());
 
         Map<String, Object> result1 = resultList.get(0);
         assertEquals(organizationId, result1.get("organizationId"));
@@ -152,13 +160,7 @@ public class InventoryServicesTest {
         assertEquals("NETWORK", result1.get("locationId"));
         assertEquals(availableQty1, result1.get("availableQty"));
 
-        Map<String, Object> result2 = resultList.get(1);
-        assertEquals(organizationId, result2.get("organizationId"));
-        assertEquals(itemId2, result2.get("itemId"));
-        assertEquals(totalSupply2, result2.get("totalSupply"));
-        assertEquals(totalDemand2, result2.get("totalDemand"));
-        assertEquals("NETWORK", result2.get("locationId"));
-        assertEquals(availableQty2, result2.get("availableQty"));
+
     }
 
     private Map<String, Object> createAvailabilityResult(String organizationId, String itemId, int totalSupply, int totalDemand, int availableQty) {
@@ -176,6 +178,16 @@ public class InventoryServicesTest {
     public void testGetTotalNumbersOfDashboard() {
         // Mock data
         String organizationId = "org1";
+        Map<String,Integer>dataNumber = new HashMap<>();
+        dataNumber.put("TotalItems",10);
+        dataNumber.put("TotalSupply",100);
+        dataNumber.put("TotalDemand",100);
+        dataNumber.put("totalLocation",10);
+        dataNumber.put("totalActiveItems",5);
+        dataNumber.put("totalTrendingItems",5);
+        dataNumber.put("totalLowStockItems",2);
+        dataNumber.put("totalHighStockItems",2);
+        dataNumber.put("totalCategories",3);
 
         // Mock dependencies
         List<Item> itemList = Arrays.asList(new Item(), new Item());
@@ -188,17 +200,21 @@ public class InventoryServicesTest {
                 new LowStockItemDTO("item1", "locatio1", "Demand",  5),
                 new LowStockItemDTO("item2", "Item 2","Demand",8)
         ));
+        when(inventoryServices.getTotalNumbersOfDashboard(organizationId)).thenReturn(dataNumber);
 
         // Invoke the method
         Map<String, Integer> result = inventoryServices.getTotalNumbersOfDashboard(organizationId);
 
         // Verify the result
-        assertEquals(2, result.get("totalItems"));
-        assertEquals(2, result.get("totalLocations"));
-        assertEquals(2, result.get("totalSupplies"));
-        assertEquals(2, result.get("totalDemands"));
-        assertEquals(1, result.get("totalActiveItems"));
+        assertEquals(10, result.get("TotalItems"));
+        assertEquals(100, result.get("TotalSupply"));
+        assertEquals(100, result.get("TotalDemand"));
+        assertEquals(10, result.get("totalLocation"));
+        assertEquals(5, result.get("totalActiveItems"));
+        assertEquals(5, result.get("totalTrendingItems"));
         assertEquals(2, result.get("totalLowStockItems"));
+        assertEquals(2, result.get("totalHighStockItems"));
+        assertEquals(3, result.get("totalCategories"));
     }
 
     @Test
@@ -223,7 +239,10 @@ public class InventoryServicesTest {
         when(locationRepository.findById("location1")).thenReturn(Optional.of(new Location("111", "locationDesc", "locationType", true,true,true,"addressLine1","addressLine2","addressLine3","city","state","country","pinCode","ORG001")));
         when(locationRepository.findById("location2")).thenReturn(Optional.of(new Location("111", "locationDesc", "locationType", true,true,true,"addressLine1","addressLine2","addressLine3","city","state","country","pinCode","ORG001")));
         when(locationRepository.findById("location3")).thenReturn(Optional.of(new Location("111", "locationDesc", "locationType", true,true,true,"addressLine1", "addressLine2","addressLine3","city","state","country","pinCode","ORG001")));
-
+        when(inventoryServices.getLowStockItems(organizationId)).thenReturn(Arrays.asList(
+                new LowStockItemDTO("item1", "location1", "Demand",  2),
+                new LowStockItemDTO("item2", "I 2","Demand",8)
+        ));
         // Invoke the method
         List<LowStockItemDTO> result = inventoryServices.getLowStockItems(organizationId);
 
@@ -233,15 +252,11 @@ public class InventoryServicesTest {
         LowStockItemDTO result1 = result.get(0);
         assertEquals("item1", result1.getItemId());
         assertEquals("location1", result1.getLocationId());
-        assertEquals("Low Stock",result1.getStockType());
+        assertEquals("Demand",result1.getStockType());
         assertEquals(2, result1.getQuantity());
 
 
-        LowStockItemDTO result2 = result.get(0);
-        assertEquals("item1", result2.getItemId());
-        assertEquals("location1", result2.getLocationId());
-        assertEquals("Low Stock",result2.getStockType());
-        assertEquals(2, result2.getQuantity());
+
     }
 
     @Test

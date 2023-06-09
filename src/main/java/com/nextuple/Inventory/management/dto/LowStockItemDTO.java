@@ -12,5 +12,4 @@ public class LowStockItemDTO {
     private String StockType;
     private int Quantity;
 
-
 }

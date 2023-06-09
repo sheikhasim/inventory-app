@@ -2,6 +2,7 @@ package com.nextuple.Inventory.management.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nextuple.Inventory.management.dto.LowStockItemDTO;
+import com.nextuple.Inventory.management.dto.TopTenItemsVsOtherItems;
 import com.nextuple.Inventory.management.model.Transaction;
 import com.nextuple.Inventory.management.service.InventoryServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,8 @@ public class InventoryController {
 
     //to get most trending items
     @GetMapping("/v6/{organizationId}")
-    public ResponseEntity<Map<String,Integer>>getMostTrendingItems(@PathVariable("organizationId") String organizationId){
-        return new ResponseEntity<>(inventoryServices.getMostTrendingItems(organizationId),HttpStatus.OK);
+    public ResponseEntity<TopTenItemsVsOtherItems>topTenItemsVsOtherItems(@PathVariable("organizationId") String organizationId){
+        return new ResponseEntity<>(inventoryServices.topTenItemsVsotherItems(organizationId),HttpStatus.OK);
     }
 
     //to get low stockItems globally

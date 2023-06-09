@@ -39,7 +39,7 @@ public class DemandController {
 
 
     @PostMapping("/{organizationId}")
-    public ResponseEntity<Demand>createSupply(@PathVariable("organizationId") String organizationId,@RequestBody Demand demand){
+    public ResponseEntity<Demand>createDemand(@PathVariable("organizationId") String organizationId,@RequestBody Demand demand){
         Demand demandCreated = demandService.createDemand(organizationId,demand);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

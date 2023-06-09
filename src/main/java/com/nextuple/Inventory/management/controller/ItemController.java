@@ -1,11 +1,11 @@
 package com.nextuple.Inventory.management.controller;
 
 import com.nextuple.Inventory.management.model.Item;
-import com.nextuple.Inventory.management.service.InventoryServices;
 import com.nextuple.Inventory.management.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +29,16 @@ public class ItemController{
     public ResponseEntity<List<Item>> itemDetails(@PathVariable String organizationId){
         return new ResponseEntity<>(itemService.itemDetails(organizationId),HttpStatus.OK);
     }
+
+    @GetMapping("/page/{organizationId}")
+    public ResponseEntity<Page<Item>> pageableItemDetails(@PathVariable String organizationId,
+                                                          @RequestParam(value = "pageNumber", defaultValue = "0",required = false) Integer pageNumber,
+                                                          @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize){
+
+        return new ResponseEntity<>(itemService.pageableItemDetails(organizationId,pageNumber,pageSize),HttpStatus.OK);
+    }
+
+
     @GetMapping("/{organizationId}/{itemId}")
     public ResponseEntity<Item>findItem(@PathVariable("organizationId")String organizationId, @PathVariable("itemId") String itemId){
         return ResponseEntity.ok(itemService.findItem(itemId,organizationId));

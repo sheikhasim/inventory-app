@@ -186,6 +186,7 @@ public class DemandService {
     public int totalDemandForItemAtParticularLocation(String organizationId, String itemId, String locationId){
         int totalDemand = 0;
         List<Demand> demandList = demandRepository.findByItemIdAndLocationIdAndOrganizationId(itemId, locationId, organizationId);
+
         if(!demandList.isEmpty()) {
             for (Demand demand : demandList) {
                 totalDemand += demand.getQuantity();

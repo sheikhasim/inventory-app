@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      uri : mongodb+srv://saleem:Saleem123@inventory.pnb7htr.mongodb.net/?retryWrites=true&w=majority
+      database: Inventory
+
+main:
+    allow-circular-references=true
+
+server:
+  port:1111
+

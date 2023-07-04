@@ -1,5 +1,6 @@
 package com.nextuple.Inventory.management.controller;
 import com.nextuple.Inventory.management.model.Organization;
+import com.nextuple.Inventory.management.swagger.annotations.FetchOrganisationsApiDocs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class OrganizationController {
     private OrganizationServices organizationServices;
 
     /////////////////////////////////////////////////organization API's///////////////////////////////////////////////////////////////////////
+    //@FetchOrganisationsApiDocs
     @GetMapping("/")
     public ResponseEntity<List<Organization>> findAllOrganization(){
         List<Organization>organizationList = organizationServices.findAllOrganization();

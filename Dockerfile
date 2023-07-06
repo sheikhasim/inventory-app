@@ -1,32 +1,26 @@
-# Use an official Maven image as the base image
-FROM maven:3.8.4-openjdk-11 AS builder
+## Fetching latest version of Java
+#FROM openjdk:17
+#
+## Setting up work directory
+##WORKDIR /app
+##
+### Copy the jar file into our app
+###COPY ./target/Inventory-23.1.0.jar /app
+##
+### Exposing port 8080
+###EXPOSE 8080
+##
+### Starting the application
+###CMD ["java", "-jar", "Inventory-23.1.0.jar"]
+##
+##ARG JAR_FILE
+##COPY ${JAR_FILE} app.jar
+##ENTRYPOINT ["java","-jar","/app.jar"]
+#
+#EXPOSE 8080
+#ADD target/inventory-docker.jar inventory-docker.jar
+#ENTRYPOINT ["java","-jar","/inventory-docker.jar"]
 
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the pom.xml file to the container
-COPY pom.xml .
-
-# Download the project dependencies
-RUN mvn dependency:go-offline
-
-# Copy the source code to the container
-COPY src ./src
-
-# Build the application
-RUN mvn package -DskipTests
-
-# Use a minimal OpenJDK image as the base image for the final container
-FROM openjdk:11-jre-slim
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the JAR file from the builder stage to the final container
-COPY --from=builder /app/target/inventory.management-0.0.1-SNAPSHOT.jar ./inventory.management-0.0.1-SNAPSHOT.jar
-
-# Expose the port on which the application will run (if applicable)
-EXPOSE 8080
-
-# Set the command to run the application when the container starts
-CMD ["java", "-jar", "inventory.management-0.0.1-SNAPSHOT.jar"]
+FROM openjdk:17
+ADD target/Inventory-23.1.0.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

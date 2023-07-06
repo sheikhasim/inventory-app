@@ -21,7 +21,18 @@ jobs:
           distribution: 'adopt'
 
       - name: Build JAR
-        run: mvn package
+        run: 
+            mvn clean package --file pom.xml
+      - uses: actions/checkout@v3
+      
+      - run: mkdir -p target/
+      
+      - run: echo hello > Inventory-23.1.0.jar
+      
+      - uses: actions/upload-artifact@v1
+        with:
+         name: Inventory-23.1.0
+         path: target/
         
  push_to_registry:
     name: Push Docker image to Docker Hub
@@ -30,6 +41,11 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
+        
+      - uses: actions/download-artifact@v1
+        with:
+          name: Inventory-23.1.0.jar
+          path: target/
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

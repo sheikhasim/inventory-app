@@ -27,7 +27,7 @@ jobs:
       
       - run: mkdir -p target/
       
-      - run: echo hello > Inventory-23.1.0.jar
+      - run: echo hello > target/Inventory-23.1.0.jar
       
       - uses: actions/upload-artifact@v1
         with:
@@ -44,7 +44,7 @@ jobs:
         
       - uses: actions/download-artifact@v1
         with:
-          name: Inventory-23.1.0.jar
+          name: Inventory-23.1.0
           path: target/
 
       - name: Log in to Docker Hub

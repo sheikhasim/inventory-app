@@ -1,9 +1,9 @@
-FROM adoptopenjdk:17-jdk-hotspot as builder
+FROM maven:3.8.4-openjdk-17-slim AS builder
 WORKDIR /app
 COPY . .
-RUN ./mvnw package -DskipTests
+RUN mvn package -DskipTests
 
-FROM adoptopenjdk:17-jre-hotspot
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
